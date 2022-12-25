@@ -1,16 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Factory_Pattern_First_Look.Business.Models.Shipping
+namespace Factory_Pattern_First_Look.Business.Models.Shipping.Factories
 {
-    public class ShippingProviderFactory
+
+    public abstract class ShippingProviderFactory
+    {
+        public abstract ShippingProvider CreateShippingProvider(string country);
+
+        public ShippingProvider GetShippingProvider(string country)
+        {
+            var provider = CreateShippingProvider(country);
+
+            if (country == "Sweden" && provider.InsuranceOptions.ProviderHasInsurance)
+            {
+                provider.RequireSignature = false;
+            }
+
+            return provider;
+        }
+    }
+
+    public class StandardShippingProviderFactory : ShippingProviderFactory
     {
 
-        public static ShippingProvider CreateChippingProvider(string country)
+        public override ShippingProvider CreateShippingProvider(string country)
         {
-            #region Create Shipping Provider
             ShippingProvider shippingProvider;
+
+            #region Create Shipping Provider
 
             if (country == "Australia")
             {
@@ -78,9 +95,14 @@ namespace Factory_Pattern_First_Look.Business.Models.Shipping
             #endregion
 
             return shippingProvider;
-
         }
+    }
 
-
+    public class GlobalExpressShippingProviderFactory : ShippingProviderFactory
+    {
+        public override ShippingProvider CreateShippingProvider(string country)
+        {
+            return new GlobalExpressShippingProvider();
+        }
     }
 }
