@@ -1,5 +1,6 @@
 ﻿using Factory_Pattern_First_Look.Business;
 using Factory_Pattern_First_Look.Business.Models.Commerce;
+using Factory_Pattern_First_Look.Business.Models.Purchase;
 using Factory_Pattern_First_Look.Business.Models.Shipping.Factories;
 using System;
 
@@ -42,15 +43,12 @@ namespace Factory_Pattern_First_Look
 
             IPurchaseProviderfactory purchaseProviderfactory;
 
-            if (order.Sender.Country == "Sweden")
+            var factoryProvider = new PurchaseProviderFactoryProvider();
+
+            purchaseProviderfactory = factoryProvider.CreateFactoryFor(order.Sender.Country);
+
+            if(purchaseProviderfactory == null)
             {
-                purchaseProviderfactory = new SwedenPurchaseProviderFactory();
-            }
-            else if (order.Sender.Country == "Australia")
-            {
-                purchaseProviderfactory = new AustraliaPurchaseProviderFactory();
-            }
-            else{
                 throw new Exception("Sender country not found");
             }
 
