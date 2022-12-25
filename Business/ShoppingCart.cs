@@ -7,17 +7,25 @@ namespace Factory_Pattern_First_Look.Business
     public class ShoppingCart
     {
         private readonly Order order;
-        private readonly ShippingProviderFactory shippingProviderFactory;
+        private readonly IPurchaseProviderfactory purchaseProviderfactory;
 
-        public ShoppingCart(Order order, ShippingProviderFactory shippingProviderFactory)
+        public ShoppingCart(Order order, IPurchaseProviderfactory purchaseProviderfactory)
         {
             this.order = order;
-            this.shippingProviderFactory = shippingProviderFactory;
+            this.purchaseProviderfactory = purchaseProviderfactory;
         }
 
         public string Finalize()    
         {
-            var shippingProvider = shippingProviderFactory.GetShippingProvider(order.Sender.Country);
+            var shippingProvider = purchaseProviderfactory.CreateShippingProvider(order);
+
+            var invoice = purchaseProviderfactory.CreateInvoice(order);
+
+            // Send invoice...
+
+            var summary = purchaseProviderfactory.CreateSummary(order);
+
+            summary.Send();
 
             order.ShippingStatus = ShippingStatus.ReadyForShippment;
 
